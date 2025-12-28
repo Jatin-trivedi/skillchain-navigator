@@ -9,12 +9,12 @@ const Branding = () => {
         <div className="w-10 h-10 flex items-center justify-center group-hover:scale-110 transition-transform overflow-hidden">
           <img
             src="/logo.png"
-            alt="SkillChain Logo"
+            alt="AuthVision Logo"
             className="w-full h-full object-contain"
           />
         </div>
         <div className="flex flex-col">
-          <span className="text-lg font-bold gradient-text">SkillChain</span>
+          <span className="text-lg font-bold gradient-text">AuthVision</span>
           <span className="text-xs text-muted-foreground">
             Verifiable • Secure • Blockchain-Backed
           </span>

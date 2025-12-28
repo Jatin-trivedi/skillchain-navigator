@@ -3,7 +3,7 @@ import FooterSection from "./FooterSection";
 
 const PlatformDescription = () => {
   return (
-    <FooterSection title="About SkillChain" icon={<Info className="w-4 h-4 text-primary" />}>
+    <FooterSection title="About AuthVision" icon={<Info className="w-4 h-4 text-primary" />}>
       <p className="text-sm text-muted-foreground leading-relaxed">
         A blockchain-powered platform for issuing, verifying, and managing tamper-proof skill credentials. Revolutionizing how skills are recognized and trusted globally.
       </p>

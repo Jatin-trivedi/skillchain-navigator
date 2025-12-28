@@ -15,6 +15,8 @@ import IssuerLogin from "./pages/auth/IssuerLogin";
 import StudentSignup from "./pages/auth/StudentSignup";
 import IssuerSignup from "./pages/auth/IssuerSignup";
 import Dashboard from "./pages/dashboard/Dashboard";
+import IssueCredentialPage from "./pages/issuer/IssueCredentialPage";
+import IssuedCredentialsPage from "./pages/issuer/IssuedCredentialsPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -43,6 +45,8 @@ const App = () => (
             {/* Protected Routes */}
             <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/issuer/issue" element={<IssueCredentialPage />} />
+              <Route path="/issuer/credentials" element={<IssuedCredentialsPage />} />
             </Route>
             
             <Route path="*" element={<NotFound />} />

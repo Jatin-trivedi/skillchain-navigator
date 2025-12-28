@@ -99,13 +99,13 @@ const IssuerDashboard = () => {
 
         {/* Quick Actions */}
         <div className="flex flex-wrap gap-3 mb-8">
-          <Button className="gradient-bg text-primary-foreground glow-hover">
+          <Button className="gradient-bg text-primary-foreground glow-hover" onClick={() => navigate('/issuer/issue')}>
             <Plus className="w-4 h-4 mr-2" />
             Issue Credential
           </Button>
-          <Button variant="outline" className="border-border">
+          <Button variant="outline" className="border-border" onClick={() => navigate('/issuer/credentials')}>
             <FileCheck className="w-4 h-4 mr-2" />
-            Verify Credential
+            View All Credentials
           </Button>
           <Button variant="outline" className="border-border">
             <Send className="w-4 h-4 mr-2" />

@@ -1,4 +1,15 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+// Import the initialized Firebase instances from your firebase.js file
+import { auth, db } from "../firebase"; 
+// Import specific Authentication functions
+import { 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  signOut, 
+  onAuthStateChanged 
+} from "firebase/auth";
+// Import specific Firestore (Database) functions
+import { doc, setDoc, getDoc } from "firebase/firestore";
 
 export type UserRole = "student" | "issuer";
 
@@ -83,124 +94,110 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Check for existing session on mount
   useEffect(() => {
-    const storedAuth = localStorage.getItem("skillchain_auth");
-    if (storedAuth) {
-      try {
-        const parsed = JSON.parse(storedAuth);
+    // This creates the listener that watches for login/logout events
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        // User is logged in, fetch their data from Firestore
+        const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
+        
+        if (userDoc.exists()) {
+          const userData = userDoc.data() as User;
+          setAuthState({
+            isAuthenticated: true,
+            user: userData,
+            role: userData.role,
+            token: await firebaseUser.getIdToken(),
+            isLoading: false,
+          });
+        }
+      } else {
+        // User is logged out, clear the state
         setAuthState({
-          isAuthenticated: true,
-          user: parsed.user,
-          role: parsed.role,
-          token: parsed.token,
+          isAuthenticated: false,
+          user: null,
+          role: null,
+          token: null,
           isLoading: false,
         });
-      } catch {
-        localStorage.removeItem("skillchain_auth");
-        setAuthState((prev) => ({ ...prev, isLoading: false }));
       }
-    } else {
-      setAuthState((prev) => ({ ...prev, isLoading: false }));
-    }
-  }, []);
+    });
+
+    // This stops the listener when the component is destroyed
+    return () => unsubscribe();
+  }, []); // The empty array ensures this only runs once when the app starts
 
   const login = async (email: string, password: string, role: UserRole): Promise<{ success: boolean; error?: string }> => {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+  try {
+    // 1. Sign in with Firebase Auth
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const firebaseUser = userCredential.user;
 
-    const mockUser = mockUsers[email.toLowerCase()];
+    // 2. Fetch the role and data from Firestore
+    const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
     
-    if (!mockUser) {
-      return { success: false, error: "No account found with this email" };
+    if (!userDoc.exists()) {
+      return { success: false, error: "User data not found in database." };
     }
 
-    if (mockUser.password !== password) {
-      return { success: false, error: "Incorrect password" };
+    const userData = userDoc.data() as User;
+
+    // 3. Verify the role matches the portal they are using
+    if (userData.role !== role) {
+      return { success: false, error: `This account is registered as a ${userData.role}, not a ${role}` };
     }
 
-    if (mockUser.user.role !== role) {
-      return { success: false, error: `This account is registered as a ${mockUser.user.role}, not a ${role}` };
-    }
-
-    const token = `mock-jwt-${Date.now()}`;
-    const newAuthState = {
-      isAuthenticated: true,
-      user: mockUser.user,
-      role: mockUser.user.role,
-      token,
-      isLoading: false,
-    };
-
-    setAuthState(newAuthState);
-    localStorage.setItem("skillchain_auth", JSON.stringify({
-      user: mockUser.user,
-      role: mockUser.user.role,
-      token,
-    }));
-
+    // AuthState will be updated automatically by the useEffect listener in Step 4
     return { success: true };
-  };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+};
 
-  const signup = async (userData: SignupData, role: UserRole): Promise<{ success: boolean; error?: string }> => {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+const signup = async (userData: SignupData, role: UserRole): Promise<{ success: boolean; error?: string }> => {
+  try {
+    // 1. Create the account in Firebase Authentication
+    const userCredential = await createUserWithEmailAndPassword(auth, userData.email, userData.password);
+    const firebaseUser = userCredential.user;
 
-    if (mockUsers[userData.email.toLowerCase()]) {
-      return { success: false, error: "An account with this email already exists" };
-    }
-
+    // 2. Determine initials for the avatar
     const initials = role === "student"
       ? `${userData.firstName?.charAt(0) || ""}${userData.lastName?.charAt(0) || ""}`.toUpperCase()
       : userData.organizationName?.substring(0, 2).toUpperCase() || "OR";
 
-    const newUser: User = {
-      id: `${Date.now()}`,
+    // 3. Construct the profile object without undefined fields
+    // Use an object literal and only add fields that exist
+    const newUser: any = {
+      id: firebaseUser.uid,
       email: userData.email,
-      firstName: userData.firstName || "",
-      lastName: userData.lastName || "",
-      role,
-      initials,
-      organizationName: userData.organizationName,
-      organizationUrl: userData.organizationUrl,
-      organizationType: userData.organizationType,
-      recipientsPerYear: userData.recipientsPerYear,
+      role: role,
+      initials: initials,
+      createdAt: new Date().toISOString()
     };
 
-    const token = `mock-jwt-${Date.now()}`;
-    
-    // Add to mock database
-    mockUsers[userData.email.toLowerCase()] = {
-      password: userData.password,
-      user: newUser,
-    };
+    // Add specific fields based on the role to prevent 'undefined' errors
+    if (role === "student") {
+      newUser.firstName = userData.firstName || "";
+      newUser.lastName = userData.lastName || "";
+    } else if (role === "issuer") {
+      newUser.organizationName = userData.organizationName || "";
+      newUser.organizationUrl = userData.organizationUrl || "";
+      newUser.organizationType = userData.organizationType || "";
+      newUser.recipientsPerYear = userData.recipientsPerYear || "";
+    }
 
-    const newAuthState = {
-      isAuthenticated: true,
-      user: newUser,
-      role,
-      token,
-      isLoading: false,
-    };
-
-    setAuthState(newAuthState);
-    localStorage.setItem("skillchain_auth", JSON.stringify({
-      user: newUser,
-      role,
-      token,
-    }));
+    // 4. Save to Firestore - This will now succeed because no fields are undefined
+    await setDoc(doc(db, "users", firebaseUser.uid), newUser);
 
     return { success: true };
-  };
+  } catch (error: any) {
+    console.error("Signup error details:", error);
+    return { success: false, error: error.message };
+  }
+};
 
-  const logout = () => {
-    setAuthState({
-      isAuthenticated: false,
-      user: null,
-      role: null,
-      token: null,
-      isLoading: false,
-    });
-    localStorage.removeItem("skillchain_auth");
-  };
+  const logout = async () => {
+  await signOut(auth);
+};
 
   return (
     <AuthContext.Provider value={{ ...authState, login, signup, logout }}>

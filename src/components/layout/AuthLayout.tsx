@@ -13,13 +13,18 @@ const AuthLayout = ({ children, title, subtitle }: AuthLayoutProps) => {
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="p-4 md:p-6">
-        <Link to="/" className="inline-flex items-center gap-2 group">
-          <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center group-hover:scale-110 transition-transform">
-            <Blocks className="w-5 h-5 text-primary-foreground" />
-          </div>
-          <span className="text-xl font-bold gradient-text">SkillChain</span>
-        </Link>
-      </header>
+  <Link to="/" className="inline-flex items-center gap-2 group">
+    <div className="w-16 h-16 flex items-center justify-center group-hover:scale-110 transition-transform overflow-hidden">
+      <img
+        src="/logo.png"
+        alt="AuthVision Logo"
+        className="w-full h-full object-contain"
+      />
+    </div>
+    <span className="text-xl font-bold gradient-text">AuthVision</span>
+  </Link>
+</header>
+
 
       {/* Main Content */}
       <main className="flex-1 flex items-center justify-center px-4 py-8">
@@ -42,7 +47,7 @@ const AuthLayout = ({ children, title, subtitle }: AuthLayoutProps) => {
       {/* Footer */}
       <footer className="p-4 text-center">
         <p className="text-sm text-muted-foreground">
-          © 2024 SkillChain. Securing credentials on the blockchain.
+          © 2025 AuthVision. Securing credentials on the blockchain.
         </p>
       </footer>
     </div>

@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/navbar/Navbar";
+import Footer from "@/components/footer/Footer";
 import { Button } from "@/components/ui/button";
 import { Shield, Blocks, Award, ArrowRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -86,6 +87,8 @@ const Index = () => {
           ))}
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 };

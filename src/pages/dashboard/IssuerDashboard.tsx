@@ -107,7 +107,7 @@ const IssuerDashboard = () => {
             <FileCheck className="w-4 h-4 mr-2" />
             View All Credentials
           </Button>
-          <Button variant="outline" className="border-border">
+          <Button variant="outline" className="border-border" onClick={() => navigate('/issuer/bulk')}>
             <Send className="w-4 h-4 mr-2" />
             Bulk Issue
           </Button>

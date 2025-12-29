@@ -17,6 +17,8 @@ import IssuerSignup from "./pages/auth/IssuerSignup";
 import Dashboard from "./pages/dashboard/Dashboard";
 import IssueCredentialPage from "./pages/issuer/IssueCredentialPage";
 import IssuedCredentialsPage from "./pages/issuer/IssuedCredentialsPage";
+import BulkIssuePage from "./pages/issuer/BulkIssuePage";
+import VerifyPage from "./pages/verification/VerifyPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -33,6 +35,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/features" element={<Features />} />
             <Route path="/examples" element={<Examples />} />
+            <Route path="/verify" element={<VerifyPage />} />
             
             {/* Auth Routes */}
             <Route path="/login" element={<LoginPage />} />
@@ -47,6 +50,7 @@ const App = () => (
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/issuer/issue" element={<IssueCredentialPage />} />
               <Route path="/issuer/credentials" element={<IssuedCredentialsPage />} />
+              <Route path="/issuer/bulk" element={<BulkIssuePage />} />
             </Route>
             
             <Route path="*" element={<NotFound />} />

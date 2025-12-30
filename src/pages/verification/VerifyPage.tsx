@@ -62,11 +62,8 @@ const VerifyPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar
-        authState="guest"
-        user={null}
+        authState="logged-out"
         activeTab="verify"
-        onLogout={() => {}}
-        onTabChange={() => {}}
       />
 
       <main className="container mx-auto px-4 md:px-8 py-8 max-w-3xl">

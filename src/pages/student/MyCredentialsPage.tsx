@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/navbar/Navbar";
 import { useAuth } from "@/contexts/AuthContext";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -13,114 +13,89 @@ import {
 } from "@/components/ui/dialog";
 import {
   Award,
-  Plus,
-  Share2,
-  TrendingUp,
-  Clock,
-  CheckCircle2,
-  ExternalLink,
-  Check,
-  Copy,
+  Eye,
+  Calendar,
   Building2,
   Tag,
-  Calendar,
+  Clock,
+  Copy,
+  Share2,
+  CheckCircle2,
   XCircle,
   AlertCircle,
 } from "lucide-react";
 import type { Credential } from "@/types/credential";
 
-const StudentDashboard = () => {
+// Mock data - replace with actual API call
+const mockCredentials: Credential[] = [
+  {
+    id: "1",
+    credentialId: "CRED-2024-001",
+    title: "AWS Cloud Practitioner",
+    description: "Certified in Amazon Web Services cloud computing fundamentals",
+    issueDate: "2024-12-15",
+    expiryDate: "2026-12-15",
+    studentId: "student-1",
+    studentEmail: "student@example.com",
+    studentName: "John Doe",
+    issuerId: "issuer-1",
+    issuerName: "Amazon Web Services",
+    category: "Software Development",
+    level: "Intermediate",
+    hours: 40,
+    skills: ["AWS", "Cloud Computing", "DevOps"],
+    status: "issued",
+    createdAt: "2024-12-15",
+    updatedAt: "2024-12-15",
+  },
+  {
+    id: "2",
+    credentialId: "CRED-2024-002",
+    title: "React Developer Certificate",
+    description: "Advanced React development skills and best practices",
+    issueDate: "2024-12-10",
+    studentId: "student-1",
+    studentEmail: "student@example.com",
+    studentName: "John Doe",
+    issuerId: "issuer-2",
+    issuerName: "Meta",
+    category: "Software Development",
+    level: "Advanced",
+    hours: 60,
+    skills: ["React", "JavaScript", "Frontend"],
+    status: "issued",
+    createdAt: "2024-12-10",
+    updatedAt: "2024-12-10",
+  },
+  {
+    id: "3",
+    credentialId: "CRED-2024-003",
+    title: "Data Science Fundamentals",
+    description: "Introduction to data science and machine learning",
+    issueDate: "2024-12-05",
+    expiryDate: "2025-12-05",
+    studentId: "student-1",
+    studentEmail: "student@example.com",
+    studentName: "John Doe",
+    issuerId: "issuer-3",
+    issuerName: "IBM",
+    category: "Data Science",
+    level: "Beginner",
+    hours: 30,
+    skills: ["Python", "Data Analysis", "Machine Learning"],
+    status: "issued",
+    createdAt: "2024-12-05",
+    updatedAt: "2024-12-05",
+  },
+];
+
+const MyCredentialsPage = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
-  const [isCopied, setIsCopied] = useState(false);
   const [selectedCredential, setSelectedCredential] = useState<Credential | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
-  const stats = [
-    { label: "Total Credentials", value: "12", icon: Award, color: "text-primary" },
-    { label: "Verified", value: "10", icon: CheckCircle2, color: "text-emerald-500" },
-    { label: "Pending", value: "2", icon: Clock, color: "text-yellow-500" },
-    { label: "Profile Views", value: "156", icon: TrendingUp, color: "text-secondary" },
-  ];
-
-  const recentCredentials: Credential[] = [
-    {
-      id: "1",
-      credentialId: "CRED-2024-001",
-      title: "AWS Cloud Practitioner",
-      description: "Certified in Amazon Web Services cloud computing fundamentals",
-      issueDate: "2024-12-15",
-      expiryDate: "2026-12-15",
-      studentId: "student-1",
-      studentEmail: user?.email || "student@example.com",
-      studentName: `${user?.firstName} ${user?.lastName}`,
-      issuerId: "issuer-1",
-      issuerName: "Amazon Web Services",
-      category: "Software Development",
-      level: "Intermediate",
-      hours: 40,
-      skills: ["AWS", "Cloud Computing", "DevOps"],
-      status: "issued",
-      createdAt: "2024-12-15",
-      updatedAt: "2024-12-15",
-    },
-    {
-      id: "2",
-      credentialId: "CRED-2024-002",
-      title: "React Developer Certificate",
-      description: "Advanced React development skills and best practices",
-      issueDate: "2024-12-10",
-      studentId: "student-1",
-      studentEmail: user?.email || "student@example.com",
-      studentName: `${user?.firstName} ${user?.lastName}`,
-      issuerId: "issuer-2",
-      issuerName: "Meta",
-      category: "Software Development",
-      level: "Advanced",
-      hours: 60,
-      skills: ["React", "JavaScript", "Frontend"],
-      status: "issued",
-      createdAt: "2024-12-10",
-      updatedAt: "2024-12-10",
-    },
-    {
-      id: "3",
-      credentialId: "CRED-2024-003",
-      title: "Data Science Fundamentals",
-      description: "Introduction to data science and machine learning",
-      issueDate: "2024-12-05",
-      expiryDate: "2025-12-05",
-      studentId: "student-1",
-      studentEmail: user?.email || "student@example.com",
-      studentName: `${user?.firstName} ${user?.lastName}`,
-      issuerId: "issuer-3",
-      issuerName: "IBM",
-      category: "Data Science",
-      level: "Beginner",
-      hours: 30,
-      skills: ["Python", "Data Analysis", "Machine Learning"],
-      status: "issued",
-      createdAt: "2024-12-05",
-      updatedAt: "2024-12-05",
-    },
-  ];
-
-  const currentUrl = window.location.href;
-
-  const handleCopyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(currentUrl);
-      setIsCopied(true);
-      setTimeout(() => {
-        setIsCopied(false);
-      }, 2000);
-    } catch (err) {
-      console.error("Failed to copy:", err);
-    }
-  };
-
-  const handleViewCredentialDetails = (credential: Credential) => {
+  const handleViewDetails = (credential: Credential) => {
     setSelectedCredential(credential);
     setIsDetailModalOpen(true);
   };
@@ -128,6 +103,7 @@ const StudentDashboard = () => {
   const handleCopyId = () => {
     if (selectedCredential) {
       navigator.clipboard.writeText(selectedCredential.credentialId);
+      // You can add a toast notification here
     }
   };
 
@@ -135,6 +111,7 @@ const StudentDashboard = () => {
     if (selectedCredential) {
       const shareUrl = `${window.location.origin}/verify/${selectedCredential.credentialId}`;
       navigator.clipboard.writeText(shareUrl);
+      // You can add a toast notification here
     }
   };
 
@@ -150,32 +127,27 @@ const StudentDashboard = () => {
     switch (status) {
       case "issued":
         return (
-          <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 cursor-pointer hover:bg-emerald-500/20 transition-colors">
+          <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20">
             <CheckCircle2 className="w-3 h-3 mr-1" />
             Verified
           </Badge>
         );
       case "revoked":
         return (
-          <Badge className="bg-destructive/10 text-destructive border-destructive/20 cursor-pointer hover:bg-destructive/20 transition-colors">
+          <Badge className="bg-destructive/10 text-destructive border-destructive/20">
             <XCircle className="w-3 h-3 mr-1" />
             Revoked
           </Badge>
         );
       case "expired":
         return (
-          <Badge className="bg-yellow-500/10 text-yellow-500 border-yellow-500/20 cursor-pointer hover:bg-yellow-500/20 transition-colors">
+          <Badge className="bg-yellow-500/10 text-yellow-500 border-yellow-500/20">
             <AlertCircle className="w-3 h-3 mr-1" />
             Expired
           </Badge>
         );
       default:
-        return (
-          <Badge className="bg-yellow-500/10 text-yellow-500 border-yellow-500/20 cursor-pointer hover:bg-yellow-500/20 transition-colors">
-            <Clock className="w-3 h-3 mr-1" />
-            Pending
-          </Badge>
-        );
+        return null;
     }
   };
 
@@ -188,7 +160,7 @@ const StudentDashboard = () => {
           initials: user?.initials || "U",
         }}
         notifications={3}
-        activeTab="dashboard"
+        activeTab="credentials"
         onLogout={() => {
           logout();
           navigate("/");
@@ -201,132 +173,88 @@ const StudentDashboard = () => {
       />
 
       <main className="container mx-auto px-4 md:px-8 py-8">
-        {/* Welcome Section */}
+        {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-            Welcome back, {user?.firstName}!
+            My Credentials
           </h1>
           <p className="text-muted-foreground mt-1">
-            Manage your credentials and track your professional growth.
+            View and manage all your professional credentials
           </p>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          {stats.map((stat) => (
-            <Card key={stat.label} className="bg-card border-border">
-              <CardContent className="p-4 md:p-6">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-muted">
-                    <stat.icon className={`w-5 h-5 ${stat.color}`} />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-                    <p className="text-xs text-muted-foreground">{stat.label}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Quick Actions */}
-        <div className="flex flex-wrap gap-3 mb-8">
-          <Button
-            className="gradient-bg text-primary-foreground glow-hover"
-            onClick={() => navigate("/student/add-credential")}
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Credential
-          </Button>
-          <Button
-            variant="outline"
-            className="border-border"
-            onClick={() => setIsShareDialogOpen(true)}
-          >
-            <Share2 className="w-4 h-4 mr-2" />
-            Share Portfolio
-          </Button>
-        </div>
-
-        {/* Recent Credentials */}
-        <Card className="bg-card border-border">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold text-foreground">
-              Recent Credentials
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {recentCredentials.map((credential) => (
-                <div
-                  key={credential.id}
-                  className="flex items-center justify-between p-4 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-lg gradient-bg flex items-center justify-center">
-                      <Award className="w-5 h-5 text-primary-foreground" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-foreground">{credential.title}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {credential.issuerName} • {formatDate(credential.issueDate)}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div
-                      onClick={() => handleViewCredentialDetails(credential)}
-                      className="cursor-pointer"
-                    >
-                      {getStatusBadge(credential.status)}
-                    </div>
-                    <Button variant="ghost" size="icon" className="text-muted-foreground">
-                      <ExternalLink className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </main>
-
-      {/* Share Portfolio Dialog */}
-      <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
-        <DialogContent className="bg-card border-border max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-lg font-semibold text-foreground">
-              Share Portfolio
-            </DialogTitle>
-          </DialogHeader>
-          <div className="py-4">
-            <div className="p-3 rounded-lg bg-muted border border-border mb-4">
-              <p className="text-sm text-muted-foreground mb-1">Portfolio Link</p>
-              <p className="text-sm text-foreground break-all">{currentUrl}</p>
-            </div>
-            <div className="flex justify-end">
+        {/* Credentials Grid */}
+        {mockCredentials.length === 0 ? (
+          <Card className="bg-card border-border">
+            <CardContent className="p-12 text-center">
+              <Award className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">
+                No Credentials Yet
+              </h3>
+              <p className="text-muted-foreground mb-4">
+                Start building your portfolio by adding your first credential
+              </p>
               <Button
-                onClick={handleCopyLink}
-                className="flex items-center gap-2"
-                variant="outline"
+                onClick={() => navigate("/student/add-credential")}
+                className="gradient-bg text-primary-foreground"
               >
-                {isCopied ? (
-                  <>
-                    <Check className="w-4 h-4" />
-                    Link copied
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-4 h-4" />
-                    Copy Link
-                  </>
-                )}
+                Add Your First Credential
               </Button>
-            </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {mockCredentials.map((credential) => (
+              <Card
+                key={credential.id}
+                className="bg-card border-border hover:border-primary/30 transition-colors"
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="w-12 h-12 rounded-lg gradient-bg flex items-center justify-center">
+                      <Award className="w-6 h-6 text-primary-foreground" />
+                    </div>
+                    {getStatusBadge(credential.status)}
+                  </div>
+
+                  <h3 className="text-lg font-semibold text-foreground mb-2">
+                    {credential.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                    {credential.description}
+                  </p>
+
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Building2 className="w-4 h-4" />
+                      <span className="truncate">{credential.issuerName}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Calendar className="w-4 h-4" />
+                      <span>Issued {formatDate(credential.issueDate)}</span>
+                    </div>
+                    {credential.expiryDate && (
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Clock className="w-4 h-4" />
+                        <span>Expires {formatDate(credential.expiryDate)}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <Button
+                    onClick={() => handleViewDetails(credential)}
+                    className="w-full"
+                    variant="outline"
+                  >
+                    <Eye className="w-4 h-4 mr-2" />
+                    View Details
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-        </DialogContent>
-      </Dialog>
+        )}
+      </main>
 
       {/* Credential Detail Modal */}
       <Dialog open={isDetailModalOpen} onOpenChange={setIsDetailModalOpen}>
@@ -478,4 +406,5 @@ const StudentDashboard = () => {
   );
 };
 
-export default StudentDashboard;
+export default MyCredentialsPage;
+

@@ -34,7 +34,6 @@ const AddCredentialPage = () => {
     issueDate: "",
     credentialFile: null as File | null,
     verificationUrl: "",
-    expiryDate: "",
     credentialId: "",
     description: "",
     verificationMethod: "",
@@ -86,7 +85,6 @@ const AddCredentialPage = () => {
       issueDate: "",
       credentialFile: null,
       verificationUrl: "",
-      expiryDate: "",
       credentialId: "",
       description: "",
       verificationMethod: "",
@@ -257,10 +255,10 @@ const AddCredentialPage = () => {
                   )}
                 </div>
 
-                {/* OR Verification URL */}
+                {/* Verification URL */}
                 <div className="space-y-2">
                   <Label htmlFor="verificationUrl" className="text-foreground">
-                    OR Verification URL
+                     Verification URL
                   </Label>
                   <Input
                     id="verificationUrl"
@@ -272,20 +270,7 @@ const AddCredentialPage = () => {
                   />
                 </div>
 
-                {/* Expiry Date (Optional) */}
-                <div className="space-y-2">
-                  <Label htmlFor="expiryDate" className="text-foreground">
-                    Expiry Date <span className="text-muted-foreground text-xs">(Optional)</span>
-                  </Label>
-                  <Input
-                    id="expiryDate"
-                    type="date"
-                    value={formData.expiryDate}
-                    onChange={(e) => handleInputChange("expiryDate", e.target.value)}
-                    className="bg-background"
-                  />
-                </div>
-
+                
                 {/* Credential ID / Certificate Number (Optional) */}
                 <div className="space-y-2">
                   <Label htmlFor="credentialId" className="text-foreground">

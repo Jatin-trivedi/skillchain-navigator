@@ -21,6 +21,7 @@ import BulkIssuePage from "./pages/issuer/BulkIssuePage";
 import VerifyPage from "./pages/verification/VerifyPage";
 import AddCredentialPage from "./pages/student/AddCredentialPage";
 import MyCredentialsPage from "./pages/student/MyCredentialsPage";
+import SharePortfolioPage from "./pages/student/SharePortfolioPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -52,6 +53,7 @@ const App = () => (
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/student/credentials" element={<MyCredentialsPage />} />
               <Route path="/student/add-credential" element={<AddCredentialPage />} />
+              <Route path="/student/share-portfolio" element={<SharePortfolioPage />} />
               <Route path="/issuer/issue" element={<IssueCredentialPage />} />
               <Route path="/issuer/credentials" element={<IssuedCredentialsPage />} />
               <Route path="/issuer/bulk" element={<BulkIssuePage />} />

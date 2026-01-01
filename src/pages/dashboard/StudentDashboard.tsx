@@ -19,7 +19,6 @@ import {
   Clock,
   CheckCircle2,
   ExternalLink,
-  Check,
   Copy,
   Building2,
   Tag,
@@ -32,8 +31,6 @@ import type { Credential } from "@/types/credential";
 const StudentDashboard = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
-  const [isCopied, setIsCopied] = useState(false);
   const [selectedCredential, setSelectedCredential] = useState<Credential | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
@@ -106,19 +103,6 @@ const StudentDashboard = () => {
     },
   ];
 
-  const currentUrl = window.location.href;
-
-  const handleCopyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(currentUrl);
-      setIsCopied(true);
-      setTimeout(() => {
-        setIsCopied(false);
-      }, 2000);
-    } catch (err) {
-      console.error("Failed to copy:", err);
-    }
-  };
 
   const handleViewCredentialDetails = (credential: Credential) => {
     setSelectedCredential(credential);
@@ -242,7 +226,7 @@ const StudentDashboard = () => {
           <Button
             variant="outline"
             className="border-border"
-            onClick={() => setIsShareDialogOpen(true)}
+            onClick={() => navigate("/student/share-portfolio")}
           >
             <Share2 className="w-4 h-4 mr-2" />
             Share Portfolio
@@ -291,42 +275,6 @@ const StudentDashboard = () => {
           </CardContent>
         </Card>
       </main>
-
-      {/* Share Portfolio Dialog */}
-      <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
-        <DialogContent className="bg-card border-border max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-lg font-semibold text-foreground">
-              Share Portfolio
-            </DialogTitle>
-          </DialogHeader>
-          <div className="py-4">
-            <div className="p-3 rounded-lg bg-muted border border-border mb-4">
-              <p className="text-sm text-muted-foreground mb-1">Portfolio Link</p>
-              <p className="text-sm text-foreground break-all">{currentUrl}</p>
-            </div>
-            <div className="flex justify-end">
-              <Button
-                onClick={handleCopyLink}
-                className="flex items-center gap-2"
-                variant="outline"
-              >
-                {isCopied ? (
-                  <>
-                    <Check className="w-4 h-4" />
-                    Link copied
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-4 h-4" />
-                    Copy Link
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
 
       {/* Credential Detail Modal */}
       <Dialog open={isDetailModalOpen} onOpenChange={setIsDetailModalOpen}>

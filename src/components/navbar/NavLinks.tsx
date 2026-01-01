@@ -36,7 +36,7 @@ const NavLinks = ({ authState, activeTab, onTabChange }: NavLinksProps) => {
           { label: "Dashboard", href: "/dashboard", icon: <LayoutDashboard className="w-4 h-4" />, id: "dashboard" },
           { label: "My Credentials", href: "/student/credentials", icon: <Award className="w-4 h-4" />, id: "credentials" },
           { label: "Add New", href: "/student/add-credential", icon: <Plus className="w-4 h-4" />, id: "add" },
-          { label: "Share", href: "/share", icon: <Share2 className="w-4 h-4" />, id: "share" },
+          { label: "Share", href: "/student/share-portfolio", icon: <Share2 className="w-4 h-4" />, id: "share" },
         ];
       case "issuer":
         return [

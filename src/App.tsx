@@ -23,6 +23,8 @@ import AddCredentialPage from "./pages/student/AddCredentialPage";
 import MyCredentialsPage from "./pages/student/MyCredentialsPage";
 import SharePortfolioPage from "./pages/student/SharePortfolioPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import PublicCredentialPage from "./pages/public/PublicCredentialPage";
+import PublicPortfolioPage from "./pages/public/PublicPortfolioPage";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +41,8 @@ const App = () => (
             <Route path="/features" element={<Features />} />
             <Route path="/examples" element={<Examples />} />
             <Route path="/verify" element={<VerifyPage />} />
+            <Route path="/c/:credentialId" element={<PublicCredentialPage />} />
+            <Route path="/portfolio/:username" element={<PublicPortfolioPage />} />
             
             {/* Auth Routes */}
             <Route path="/login" element={<LoginPage />} />

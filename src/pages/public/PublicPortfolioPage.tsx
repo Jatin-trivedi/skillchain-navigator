@@ -4,7 +4,6 @@ import {
   Award, 
   Shield, 
   User, 
-  Mail, 
   Calendar, 
   ExternalLink,
   Share2,
@@ -12,13 +11,22 @@ import {
   Twitter,
   Copy,
   CheckCircle2,
-  Building2
+  Building2,
+  Download,
+  Mail,
+  Sparkles,
+  TrendingUp,
+  Users,
+  QrCode
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CredentialStatusBadge } from '@/components/credential/CredentialStatusBadge';
 import { QRCodeDisplay } from '@/components/credential/QRCodeDisplay';
+import { GlassCard, GradientText, TrustIndicator } from '@/components/ui/glass-card';
+import { PortfolioLoadingSkeleton } from '@/components/ui/skeleton-loader';
+import { EmptyState } from '@/components/ui/empty-state';
 import { useToast } from '@/hooks/use-toast';
 import type { Credential } from '@/types/credential';
 
@@ -30,6 +38,8 @@ interface PortfolioData {
     username: string;
     bio?: string;
     profilePhoto?: string;
+    tagline?: string;
+    trustScore?: number;
   };
   credentials: Credential[];
   skills: string[];
@@ -50,6 +60,8 @@ const getMockPortfolio = (username: string): PortfolioData | null => {
         email: 'jatin@example.com',
         username: 'jatin_tech',
         bio: 'BTech Student • Cloud & Blockchain Enthusiast • Building the future with code',
+        tagline: 'Full Stack Developer',
+        trustScore: 98,
       },
       credentials: [
         {
@@ -64,8 +76,8 @@ const getMockPortfolio = (username: string): PortfolioData | null => {
           studentName: 'Jatin Kumar',
           issuerId: 'issuer_001',
           issuerName: 'Amazon Web Services',
-          category: 'Software Development',
-          level: 'Intermediate',
+          category: 'Cloud Computing',
+          level: 'Associate',
           hours: 40,
           skills: ['AWS', 'Cloud Architecture', 'DevOps'],
           status: 'issued',
@@ -83,7 +95,7 @@ const getMockPortfolio = (username: string): PortfolioData | null => {
           studentName: 'Jatin Kumar',
           issuerId: 'issuer_002',
           issuerName: 'Meta',
-          category: 'Software Development',
+          category: 'Frontend Development',
           level: 'Advanced',
           hours: 60,
           skills: ['React', 'JavaScript', 'TypeScript'],
@@ -128,11 +140,12 @@ const PublicPortfolioPage = () => {
   const [portfolio, setPortfolio] = useState<PortfolioData | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   useEffect(() => {
     const fetchPortfolio = async () => {
       setLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 800));
       const data = getMockPortfolio(username || 'demo');
       setPortfolio(data);
       setLoading(false);
@@ -149,7 +162,7 @@ const PublicPortfolioPage = () => {
     });
   };
 
-  const handleShare = (platform: 'linkedin' | 'twitter' | 'copy') => {
+  const handleShare = (platform: 'linkedin' | 'twitter' | 'copy' | 'email') => {
     const shareUrl = window.location.href;
     const shareText = `Check out ${portfolio?.user.name}'s verified credentials portfolio on SkillChain`;
 
@@ -166,6 +179,9 @@ const PublicPortfolioPage = () => {
           '_blank'
         );
         break;
+      case 'email':
+        window.location.href = `mailto:?subject=${encodeURIComponent(`${portfolio?.user.name}'s Credential Portfolio`)}&body=${encodeURIComponent(`Check out this verified credentials portfolio: ${shareUrl}`)}`;
+        break;
       case 'copy':
         navigator.clipboard.writeText(shareUrl);
         setCopied(true);
@@ -179,14 +195,7 @@ const PublicPortfolioPage = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-muted-foreground">Loading portfolio...</p>
-        </div>
-      </div>
-    );
+    return <PortfolioLoadingSkeleton />;
   }
 
   if (!portfolio) {
@@ -210,8 +219,14 @@ const PublicPortfolioPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Animated Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-secondary/5 rounded-full blur-3xl" />
+      </div>
+
       {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+      <header className="relative border-b border-border bg-card/50 backdrop-blur-xl sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-2">
@@ -229,157 +244,262 @@ const PublicPortfolioPage = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Profile Header */}
-        <div className="text-center mb-8">
-          <div className="w-24 h-24 rounded-full gradient-bg flex items-center justify-center mx-auto mb-4">
-            <User className="w-12 h-12 text-primary-foreground" />
+      <main className="relative container mx-auto px-4 py-8 max-w-4xl">
+        {/* Profile Header - Enhanced */}
+        <div className="text-center mb-10 animate-fade-in-up">
+          {/* Avatar with gradient border */}
+          <div className="relative inline-block mb-6">
+            <div className="w-28 h-28 rounded-full p-1 bg-gradient-to-r from-primary to-secondary">
+              <div className="w-full h-full rounded-full gradient-bg flex items-center justify-center">
+                <User className="w-14 h-14 text-primary-foreground" />
+              </div>
+            </div>
+            {/* Verified badge */}
+            <div className="absolute -bottom-1 -right-1 bg-emerald-500 rounded-full p-1.5 border-4 border-background trust-glow">
+              <CheckCircle2 className="w-4 h-4 text-white" />
+            </div>
           </div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">{portfolio.user.name}</h1>
+
+          <h1 className="text-3xl font-bold text-foreground mb-1">{portfolio.user.name}</h1>
+          {portfolio.user.tagline && (
+            <p className="text-primary font-medium mb-2">{portfolio.user.tagline}</p>
+          )}
           {portfolio.user.bio && (
             <p className="text-muted-foreground max-w-md mx-auto mb-4">{portfolio.user.bio}</p>
           )}
-          <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground mb-6">
-            <Badge variant="outline" className="border-primary/30 text-primary">
+
+          {/* Trust Score & Verified Badge */}
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 bg-emerald-500/10 px-3 py-1">
+              <Sparkles className="w-3 h-3 mr-1" />
+              Trust Score: {portfolio.user.trustScore || 95}%
+            </Badge>
+            <Badge variant="outline" className="border-primary/30 text-primary bg-primary/10 px-3 py-1">
               <CheckCircle2 className="w-3 h-3 mr-1" />
               Verified Profile
             </Badge>
           </div>
 
           {/* Share Buttons */}
-          <div className="flex justify-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => handleShare('linkedin')}>
-              <Linkedin className="w-4 h-4 mr-2" />
+          <div className="flex justify-center gap-2 flex-wrap">
+            <Button variant="outline" size="sm" onClick={() => handleShare('linkedin')} className="gap-2">
+              <Linkedin className="w-4 h-4" />
               LinkedIn
             </Button>
-            <Button variant="outline" size="sm" onClick={() => handleShare('twitter')}>
-              <Twitter className="w-4 h-4 mr-2" />
+            <Button variant="outline" size="sm" onClick={() => handleShare('twitter')} className="gap-2">
+              <Twitter className="w-4 h-4" />
               Twitter
             </Button>
-            <Button variant="outline" size="sm" onClick={() => handleShare('copy')}>
-              {copied ? <CheckCircle2 className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
+            <Button variant="outline" size="sm" onClick={() => handleShare('email')} className="gap-2">
+              <Mail className="w-4 h-4" />
+              Email
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => handleShare('copy')} className="gap-2">
+              {copied ? <CheckCircle2 className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
               {copied ? 'Copied!' : 'Copy Link'}
             </Button>
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
-          <Card className="bg-card border-border">
-            <CardContent className="p-4 text-center">
-              <p className="text-3xl font-bold text-foreground">{portfolio.stats.totalCredentials}</p>
-              <p className="text-sm text-muted-foreground">Credentials</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-card border-border">
-            <CardContent className="p-4 text-center">
-              <p className="text-3xl font-bold text-emerald-400">{portfolio.stats.verifiedCount}</p>
-              <p className="text-sm text-muted-foreground">Verified</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-card border-border">
-            <CardContent className="p-4 text-center">
-              <p className="text-3xl font-bold text-foreground">{portfolio.stats.uniqueIssuers}</p>
-              <p className="text-sm text-muted-foreground">Issuers</p>
-            </CardContent>
-          </Card>
+        {/* Stats - Enhanced */}
+        <div className="grid grid-cols-3 gap-4 mb-8 animate-fade-in-up stagger-1">
+          <GlassCard className="p-4 text-center">
+            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-2">
+              <Award className="w-5 h-5 text-primary" />
+            </div>
+            <p className="text-3xl font-bold text-foreground">{portfolio.stats.totalCredentials}</p>
+            <p className="text-sm text-muted-foreground">Credentials</p>
+          </GlassCard>
+          <GlassCard className="p-4 text-center" gradient="success">
+            <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center mx-auto mb-2">
+              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+            </div>
+            <p className="text-3xl font-bold text-emerald-400">{portfolio.stats.verifiedCount}</p>
+            <p className="text-sm text-muted-foreground">Verified</p>
+          </GlassCard>
+          <GlassCard className="p-4 text-center">
+            <div className="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center mx-auto mb-2">
+              <Building2 className="w-5 h-5 text-secondary" />
+            </div>
+            <p className="text-3xl font-bold text-foreground">{portfolio.stats.uniqueIssuers}</p>
+            <p className="text-sm text-muted-foreground">Issuers</p>
+          </GlassCard>
         </div>
 
-        {/* Skills */}
-        <Card className="bg-card border-border mb-8">
-          <CardContent className="p-6">
-            <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-              <Award className="w-5 h-5 text-primary" />
-              Skills & Expertise
-            </h2>
-            <div className="flex flex-wrap gap-2">
-              {portfolio.skills.map((skill) => (
-                <Badge
-                  key={skill}
-                  variant="outline"
-                  className="bg-primary/10 text-primary border-primary/20 px-3 py-1"
-                >
-                  {skill}
-                </Badge>
-              ))}
+        {/* Skills - Enhanced */}
+        <GlassCard className="p-6 mb-8 animate-fade-in-up stagger-2">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-primary" />
+              <h2 className="text-lg font-semibold text-foreground">Skills & Expertise</h2>
             </div>
-            <p className="text-xs text-muted-foreground mt-3">
-              Extracted from {portfolio.stats.totalCredentials} verified credentials
-            </p>
-          </CardContent>
-        </Card>
+            <span className="text-xs text-muted-foreground">
+              Extracted from {portfolio.stats.totalCredentials} credentials
+            </span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {portfolio.skills.map((skill, index) => (
+              <Badge
+                key={skill}
+                variant="outline"
+                className="bg-primary/10 text-primary border-primary/20 px-3 py-1 hover:bg-primary/20 transition-colors animate-fade-in"
+                style={{ animationDelay: `${index * 0.05}s` }}
+              >
+                {skill}
+              </Badge>
+            ))}
+          </div>
+        </GlassCard>
 
-        {/* Credentials */}
-        <div className="mb-8">
-          <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-            <Shield className="w-5 h-5 text-primary" />
-            Verified Credentials ({portfolio.credentials.length})
-          </h2>
-          <div className="space-y-4">
-            {portfolio.credentials.map((credential) => (
-              <Card key={credential.id} className="bg-card border-border hover:border-primary/30 transition-colors">
-                <CardContent className="p-4">
+        {/* Credentials - Enhanced */}
+        <div className="mb-8 animate-fade-in-up stagger-3">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Shield className="w-5 h-5 text-primary" />
+              <h2 className="text-lg font-semibold text-foreground">
+                Verified Credentials ({portfolio.credentials.length})
+              </h2>
+            </div>
+          </div>
+
+          {portfolio.credentials.length > 0 ? (
+            <div className="space-y-4">
+              {portfolio.credentials.map((credential, index) => (
+                <GlassCard 
+                  key={credential.id} 
+                  className="p-4 animate-fade-in-up"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                  gradient="success"
+                >
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-lg gradient-bg flex items-center justify-center flex-shrink-0">
-                      <Award className="w-6 h-6 text-primary-foreground" />
+                    <div className="w-14 h-14 rounded-xl gradient-bg flex items-center justify-center flex-shrink-0">
+                      <Award className="w-7 h-7 text-primary-foreground" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-start justify-between gap-2 mb-2">
                         <div>
-                          <h3 className="font-semibold text-foreground">{credential.title}</h3>
-                          <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
+                          <h3 className="font-semibold text-foreground text-lg">{credential.title}</h3>
+                          <p className="text-sm text-muted-foreground flex items-center gap-1 mt-0.5">
                             <Building2 className="w-3 h-3" />
                             {credential.issuerName}
                           </p>
                         </div>
-                        <CredentialStatusBadge status={credential.status} size="sm" />
+                        <CredentialStatusBadge status={credential.status} size="sm" animated />
                       </div>
-                      <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
+                      <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                        {credential.description}
+                      </p>
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3">
                         <span className="flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
                           {formatDate(credential.issueDate)}
                         </span>
-                        <span>{credential.category}</span>
-                        <span>{credential.level}</span>
+                        <span className="px-2 py-0.5 rounded-full bg-muted/50">{credential.category}</span>
+                        <span className="px-2 py-0.5 rounded-full bg-muted/50">{credential.level}</span>
                       </div>
+                      {/* Skills tags */}
+                      {credential.skills && credential.skills.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5">
+                          {credential.skills.slice(0, 4).map((skill) => (
+                            <span
+                              key={skill}
+                              className="px-2 py-0.5 text-xs rounded-full bg-primary/10 text-primary border border-primary/20"
+                            >
+                              {skill}
+                            </span>
+                          ))}
+                          {credential.skills.length > 4 && (
+                            <span className="px-2 py-0.5 text-xs text-muted-foreground">
+                              +{credential.skills.length - 4} more
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </div>
-                    <Link to={`/c/${credential.credentialId}`}>
-                      <Button variant="ghost" size="sm">
-                        <ExternalLink className="w-4 h-4" />
+                    <div className="flex flex-col gap-2">
+                      <Link to={`/c/${credential.credentialId}`}>
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <ExternalLink className="w-4 h-4" />
+                        </Button>
+                      </Link>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8"
+                        onClick={() => {
+                          navigator.clipboard.writeText(credential.credentialId);
+                          toast({ title: 'Copied!', description: 'Credential ID copied to clipboard.' });
+                        }}
+                      >
+                        <Copy className="w-4 h-4" />
                       </Button>
-                    </Link>
+                    </div>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                </GlassCard>
+              ))}
+            </div>
+          ) : (
+            <EmptyState
+              type="credentials"
+              title="No Credentials Yet"
+              message="This portfolio doesn't have any credentials yet."
+            />
+          )}
         </div>
 
-        {/* Recruiter Section */}
-        <Card className="bg-indigo-500/10 border-indigo-500/20">
-          <CardContent className="p-6">
-            <h3 className="font-semibold text-foreground mb-2">🤝 For Recruiters & Verifiers</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              All credentials on this page are blockchain-verified and can be independently validated.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <Link to="/verify">
-                <Button variant="outline" size="sm">
-                  <Shield className="w-4 h-4 mr-2" />
-                  Verify All Credentials
-                </Button>
-              </Link>
-              <Button variant="outline" size="sm" onClick={() => handleShare('copy')}>
-                <Share2 className="w-4 h-4 mr-2" />
-                Share Portfolio
-              </Button>
+        {/* Recruiter Section - Enhanced */}
+        <GlassCard className="p-6 animate-fade-in-up stagger-4" gradient="primary" glow>
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0">
+              <Users className="w-6 h-6 text-white" />
             </div>
-          </CardContent>
-        </Card>
+            <div className="flex-1">
+              <h3 className="font-semibold text-foreground text-lg mb-1">For Recruiters & Verifiers</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                All credentials on this page are blockchain-verified and can be independently validated.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <Link to="/verify">
+                  <Button size="sm" className="gap-2">
+                    <Shield className="w-4 h-4" />
+                    Verify All Credentials
+                  </Button>
+                </Link>
+                <Button variant="outline" size="sm" onClick={() => handleShare('copy')} className="gap-2">
+                  <Share2 className="w-4 h-4" />
+                  Share Portfolio
+                </Button>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Download className="w-4 h-4" />
+                  Download Report
+                </Button>
+              </div>
+            </div>
+          </div>
+          
+          {/* Trust indicators */}
+          <div className="grid sm:grid-cols-3 gap-3 mt-6 pt-6 border-t border-border/50">
+            <TrustIndicator
+              icon={<Shield className="w-4 h-4" />}
+              label="Blockchain Verified"
+              verified
+            />
+            <TrustIndicator
+              icon={<CheckCircle2 className="w-4 h-4" />}
+              label="Tamper-Proof"
+              verified
+            />
+            <TrustIndicator
+              icon={<Award className="w-4 h-4" />}
+              label="Trusted Issuers"
+              verified
+            />
+          </div>
+        </GlassCard>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border mt-12 py-8">
+      <footer className="relative border-t border-border mt-12 py-8">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
           <p>© 2024 SkillChain. Blockchain-verified credentials for the digital age.</p>
         </div>

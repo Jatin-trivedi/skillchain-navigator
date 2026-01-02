@@ -24,7 +24,7 @@ const Branding = () => {
       {/* Copyright & Hackathon Badge */}
       <div className="flex flex-col md:flex-row items-center gap-4">
         <span className="text-sm text-muted-foreground">
-          © 2026 SkillChain. All rights reserved.
+          © 2026 AuthVision. All rights reserved.
         </span>
         
         {/* Hackathon MVP Badge */}

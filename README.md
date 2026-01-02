@@ -1,18 +1,18 @@
 # 🚀 AuthVision — Verified Credentials. Trusted Instantly.
 
-AuthVision is a **blockchain-backed credential verification platform** that enables students, institutions, and recruiters to issue, share, and verify credentials **instantly and securely**.
+AuthVision is a **blockchain-backed credential verification platform** that enables students, institutions, and recruiters to **issue, share, and verify credentials instantly and securely**.
 
-Built as a **hackathon MVP**, AuthVision demonstrates how academic and skill credentials can be transformed into **tamper-proof, verifiable digital trust assets**.
+Built as a **hackathon MVP**, AuthVision demonstrates how academic and skill-based credentials can be transformed into **tamper-proof digital trust assets** using public verification and QR-based validation.
 
 ---
 
-## 🎯 Problem
+## 🎯 Problem Statement
 
 Traditional credentials are:
 - Easy to forge
 - Hard to verify
 - Time-consuming for recruiters
-- Scattered across multiple platforms
+- Scattered across platforms
 
 There is **no fast, trusted, public verification system** for credentials today.
 
@@ -20,7 +20,7 @@ There is **no fast, trusted, public verification system** for credentials today.
 
 ## 💡 Solution
 
-AuthVision provides a **single trusted platform** where:
+AuthVision provides a **single trust-first platform** where:
 
 - Students manage and share verified credentials
 - Issuers approve and revoke credentials
@@ -29,20 +29,17 @@ AuthVision provides a **single trusted platform** where:
 
 ---
 
-## 🧠 How It Works (Demo Flow)
+## 🧠 How It Works (End-to-End Flow)
 
-1️⃣ **Credential Issued**
-- Issuer issues a credential to a student
-- Unique Credential ID is generated
+1️⃣ **Credential Issuance**  
+Issuer or student adds credential → unique Credential ID is generated
 
-2️⃣ **Verification & Status**
-- Credential status: Verified / Pending / Revoked / Expired
-- Stored securely in database
+2️⃣ **Verification & Status Control**  
+Issuer approves / rejects → credential status updates in real time
 
-3️⃣ **Public Verification**
-- Recruiter opens public link or scans QR
-- Credential authenticity is verified instantly
-- No login required
+3️⃣ **Public Verification**  
+Recruiter scans QR or opens public link → authenticity verified instantly  
+(No login required)
 
 ---
 
@@ -51,22 +48,23 @@ AuthVision provides a **single trusted platform** where:
 ### 🎓 Student
 - Personal dashboard
 - Add & manage credentials
-- Download certificate (PDF)
+- View credential details & proof
+- Download credential (PDF)
 - Export verification proof (JSON)
 - Share public portfolio
-- QR-based verification
+- QR-based credential sharing
 
 ### 🏛 Issuer
 - Issue credentials
 - View issued credentials
-- Revoke credentials if required
-- Maintain trust & authenticity
+- Revoke credentials when required
+- Maintain institutional trust
 
 ### 🔍 Recruiter / Public
 - View public student portfolio
-- Verify credential via ID / QR
-- See credential status instantly
-- Download proof
+- Verify credential via ID or QR
+- See real-time credential status
+- Download verification proof
 
 ---
 
@@ -80,40 +78,63 @@ AuthVision provides a **single trusted platform** where:
 | Expired   | Validity ended |
 | Revoked   | Cancelled by issuer |
 
-This makes the system **realistic and production-ready**.
+Credential status dynamically controls UI, verification results, and trust level.
 
 ---
 
 ## 🌐 Public Pages (Trust & Transparency)
 
-- `/portfolio/{id}` → Public student profile
-- `/c/{credentialId}` → Public credential page
-- `/verify/{credentialId}` → QR verification
-- `/docs` → How the platform works
-- `/why-blockchain` → Why blockchain for trust
-- `/help`, `/contact`, `/terms`, `/privacy`
+AuthVision includes public-facing pages to ensure transparency and usability:
+
+- `/portfolio/{userId}` — Public student profile
+- `/c/{credentialId}` — Public credential page
+- `/verify/{credentialId}` — QR / link-based verification
+- `/docs` — How the platform works
+- `/why-blockchain` — Why blockchain-backed verification
+- `/help` — FAQs
+- `/contact` — Support
+- `/terms` — Terms & conditions (MVP)
+- `/privacy` — Privacy policy
+
+All public pages are **read-only and require no authentication**.
 
 ---
 
-## 🧾 Proof & Verification
+## 🧾 Proof & Export System
 
-Each credential includes:
-- Unique Credential ID
-- QR Code verification
-- Shareable public link
-- PDF certificate download
-- JSON verification proof
-- Blockchain-style hash (simulated)
+Each credential supports:
+- 📄 **PDF Certificate Download**
+- 📂 **JSON Verification Proof**
+- 🔗 **Public Shareable Link**
+- 📱 **QR Code Verification**
+- 🔐 **Blockchain-style Hash (Simulated)**
 
 ---
 
-## 🔗 Blockchain (MVP Implementation)
+## 🔗 Blockchain (MVP Scope)
 
-- Blockchain proof is **simulated for hackathon**
+- Blockchain logic is **simulated for hackathon MVP**
+- Each credential contains a unique hash
 - Demonstrates immutability & trust concept
 - Easily extendable to real blockchain networks
 
-This keeps the MVP **lightweight yet future-ready**.
+---
+
+## 🏗 Architecture Overview
+
+AuthVision uses a **frontend-first architecture** with Firebase as Backend-as-a-Service.
+
+REACT + Typrscript 
+↓
+Firebase Authentication
+Firebase Firestore
+
+- Frontend handles UI, flows, and proof generation
+- Firestore acts as source of truth
+- Public verification routes are read-only
+
+📄 Detailed architecture is available in:
+README-ARCHITECTURE.md
 
 ---
 
@@ -123,8 +144,9 @@ This keeps the MVP **lightweight yet future-ready**.
 - React + TypeScript
 - Tailwind CSS
 - shadcn/ui
+- Lucide Icons
 
-**Backend**
+**Backend & Services**
 - Firebase Authentication
 - Firebase Firestore
 
@@ -134,16 +156,18 @@ This keeps the MVP **lightweight yet future-ready**.
 
 ---
 
-## 🏆 Why AuthVision Stands Out
+## 🔐 Environment Configuration
 
-✔ Real problem with real users  
-✔ End-to-end verification flow  
-✔ Public shareable trust system  
-✔ Recruiter-friendly UX  
-✔ Enterprise-grade design  
-✔ Hackathon-ready MVP  
+This project uses environment variables for configuration.
 
-AuthVision feels less like a demo and more like a **launch-ready product**.
+A sample file is provided:
+.env.example
+### Local Setup
+1. Copy `.env.example` → `.env`
+2. Add Firebase credentials
+3. Run the development server
+
+Sensitive keys are never committed to the repository.
 
 ---
 
@@ -152,16 +176,29 @@ AuthVision feels less like a demo and more like a **launch-ready product**.
 - ✅ Fully functional MVP
 - ✅ Uses real seeded data (not dummy UI)
 - ✅ Public verification enabled
+- ✅ QR-based trust system implemented
 - ✅ Designed for scalability
+
+---
+
+## 🏆 Why AuthVision Stands Out
+
+✔ Solves a real-world trust problem  
+✔ End-to-end verification flow  
+✔ Public, login-free verification  
+✔ Recruiter-focused UX  
+✔ Enterprise-style frontend  
+✔ Hackathon-ready MVP  
+
+AuthVision feels less like a demo and more like a **launch-ready product**.
 
 ---
 
 ## ⚠ Disclaimer
 
-This is a **hackathon prototype**.  
-Blockchain verification is simulated for demonstration purposes.
+This project is a **hackathon prototype**.  
+Blockchain verification is simulated for demonstration purposes only.
 
 ---
 
 **AuthVision — Trust, Verified.**
-

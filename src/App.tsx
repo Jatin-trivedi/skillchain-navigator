@@ -25,6 +25,13 @@ import SharePortfolioPage from "./pages/student/SharePortfolioPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import PublicCredentialPage from "./pages/public/PublicCredentialPage";
 import PublicPortfolioPage from "./pages/public/PublicPortfolioPage";
+// Static Pages
+import DocsPage from "./pages/static/DocsPage";
+import HelpPage from "./pages/static/HelpPage";
+import ContactPage from "./pages/static/ContactPage";
+import TermsPage from "./pages/static/TermsPage";
+import PrivacyPage from "./pages/static/PrivacyPage";
+import WhyBlockchainPage from "./pages/static/WhyBlockchainPage";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +49,15 @@ const App = () => (
             <Route path="/examples" element={<Examples />} />
             <Route path="/verify" element={<VerifyPage />} />
             <Route path="/c/:credentialId" element={<PublicCredentialPage />} />
+            <Route path="/portfolio/:username" element={<PublicPortfolioPage />} />
+            
+            {/* Static Pages */}
+            <Route path="/docs" element={<DocsPage />} />
+            <Route path="/help" element={<HelpPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/why-blockchain" element={<WhyBlockchainPage />} />
             <Route path="/portfolio/:username" element={<PublicPortfolioPage />} />
             
             {/* Auth Routes */}

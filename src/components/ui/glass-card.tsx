@@ -7,6 +7,7 @@ interface GlassCardProps {
   hover?: boolean;
   glow?: boolean;
   gradient?: 'primary' | 'success' | 'warning' | 'error' | 'none';
+  style?: React.CSSProperties;
 }
 
 const gradientConfig = {
@@ -23,6 +24,7 @@ export const GlassCard = ({
   hover = true,
   glow = false,
   gradient = 'primary',
+  style,
 }: GlassCardProps) => {
   return (
     <div
@@ -33,6 +35,7 @@ export const GlassCard = ({
         glow && 'glow-sm',
         className
       )}
+      style={style}
     >
       {children}
     </div>

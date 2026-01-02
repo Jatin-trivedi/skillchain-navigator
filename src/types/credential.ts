@@ -9,9 +9,11 @@ export type CredentialCategory =
   | 'Hackathon Achievement'
   | 'Internship Completion'
   | 'Course Certification'
-  | 'Workshop Participation';
+  | 'Workshop Participation'
+  | 'Cloud Computing'
+  | 'Frontend Development';
 
-export type SkillLevel = 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
+export type SkillLevel = 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert' | 'Associate';
 
 export interface Credential {
   id: string;
@@ -87,6 +89,8 @@ export const CREDENTIAL_CATEGORIES: CredentialCategory[] = [
   'Internship Completion',
   'Course Certification',
   'Workshop Participation',
+  'Cloud Computing',
+  'Frontend Development',
 ];
 
 export const SKILL_LEVELS: SkillLevel[] = [
@@ -94,4 +98,5 @@ export const SKILL_LEVELS: SkillLevel[] = [
   'Intermediate',
   'Advanced',
   'Expert',
+  'Associate',
 ];

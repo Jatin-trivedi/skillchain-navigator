@@ -29,13 +29,14 @@ export interface VerificationResult {
   };
 }
 
-// Generate deterministic mock blockchain data based on credential
+/**
+ * Generates a deterministic mock blockchain proof.
+ * This simulates a real blockchain record based on the unique Credential ID.
+ */
 const generateBlockchainProof = (credential: Credential): BlockchainProof => {
-  // Create deterministic values based on credential data
   const seed = credential.credentialId.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
   const blockNumber = 1800000 + (seed * 1234) % 200000;
   
-  // Generate deterministic hashes
   const generateHash = (prefix: string) => {
     const chars = '0123456789abcdef';
     let hash = '0x';
@@ -49,7 +50,6 @@ const generateBlockchainProof = (credential: Credential): BlockchainProof => {
   const transactionHash = generateHash('tx');
   const credentialHash = generateHash('cred').substring(0, 42) + '...';
 
-  // Generate timestamp slightly after issue date
   const issueDate = new Date(credential.issueDate || credential.createdAt);
   issueDate.setMinutes(issueDate.getMinutes() + (seed % 60));
 
@@ -66,37 +66,48 @@ const generateBlockchainProof = (credential: Credential): BlockchainProof => {
   };
 };
 
+/**
+ * Verifies a credential by checking the Firestore 'issuedCredentials' collection.
+ */
 export const verifyCredential = async (credentialId: string): Promise<VerificationResult> => {
   const verificationDate = new Date().toISOString();
   const verificationId = `VER-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
 
-  // Validate credential ID format
-  if (!credentialId || credentialId.trim().length < 5) {
+  // 1. Basic Validation
+  if (!credentialId || credentialId.trim().length < 3) {
     return {
       isValid: false,
       status: 'invalid',
       verificationDate,
       verificationId,
-      message: 'Invalid credential ID format'
+      message: 'Please enter a valid Credential ID'
     };
   }
 
   try {
-    // Query Firestore for the credential
+    // 2. Query Firestore
+    // Note: We search for the credentialId field. We trim and uppercase for consistency.
     const credsRef = collection(db, 'issuedCredentials');
-    const q = query(credsRef, where('credentialId', '==', credentialId.trim().toUpperCase()), limit(1));
+    const q = query(
+      credsRef, 
+      where('credentialId', '==', credentialId.trim()), 
+      limit(1)
+    );
+    
     const querySnapshot = await getDocs(q);
 
+    // 3. Handle Not Found
     if (querySnapshot.empty) {
       return {
         isValid: false,
         status: 'not_found',
         verificationDate,
         verificationId,
-        message: 'Credential not found in the system'
+        message: 'No credential found with this ID. Please verify the characters and try again.'
       };
     }
 
+    // 4. Map Data to Credential Type
     const doc = querySnapshot.docs[0];
     const data = doc.data();
 
@@ -115,16 +126,16 @@ export const verifyCredential = async (credentialId: string): Promise<Verificati
       category: data.category,
       level: data.level,
       ...(data.hours != null ? { hours: Number(data.hours) } : {}),
-      ...(Array.isArray(data.skills) ? { skills: data.skills } : {}),
+      skills: Array.isArray(data.skills) ? data.skills : [],
       status: data.status || 'issued',
       ...(data.blockchainHash ? { blockchainHash: String(data.blockchainHash) } : {}),
       ...(data.revokedAt ? { revokedAt: String(data.revokedAt) } : {}),
       ...(data.revokedReason ? { revokedReason: String(data.revokedReason) } : {}),
-      createdAt: typeof data.createdAt === 'string' ? data.createdAt : new Date().toISOString(),
-      updatedAt: typeof data.updatedAt === 'string' ? data.updatedAt : new Date().toISOString(),
+      createdAt: data.createdAt?.seconds ? new Date(data.createdAt.seconds * 1000).toISOString() : new Date().toISOString(),
+      updatedAt: data.updatedAt?.seconds ? new Date(data.updatedAt.seconds * 1000).toISOString() : new Date().toISOString(),
     };
 
-    // Check status
+    // 5. Check Status (Revoked/Expired)
     if (credential.status === 'revoked') {
       return {
         isValid: false,
@@ -132,41 +143,26 @@ export const verifyCredential = async (credentialId: string): Promise<Verificati
         credential,
         verificationDate,
         verificationId,
-        message: 'This credential has been revoked by the issuer',
+        message: 'This credential was revoked by the issuing authority.',
         revokedInfo: {
           date: credential.revokedAt || 'Unknown',
-          reason: credential.revokedReason || 'No reason provided'
+          reason: credential.revokedReason || 'Policy violation or record update'
         }
       };
     }
 
-    if (credential.status === 'expired') {
+    if (credential.expiryDate && new Date(credential.expiryDate) < new Date()) {
       return {
         isValid: false,
         status: 'expired',
         credential,
         verificationDate,
         verificationId,
-        message: 'This credential has expired'
+        message: 'This credential has reached its expiration date and is no longer valid.'
       };
     }
 
-    // Check expiry date
-    if (credential.expiryDate) {
-      const expiryDate = new Date(credential.expiryDate);
-      if (expiryDate < new Date()) {
-        return {
-          isValid: false,
-          status: 'expired',
-          credential,
-          verificationDate,
-          verificationId,
-          message: 'This credential has expired'
-        };
-      }
-    }
-
-    // Valid credential - generate blockchain proof
+    // 6. Success - Generate Blockchain Proof
     const blockchainProof = generateBlockchainProof(credential);
 
     return {
@@ -176,16 +172,17 @@ export const verifyCredential = async (credentialId: string): Promise<Verificati
       blockchainProof,
       verificationDate,
       verificationId,
-      message: 'Credential verified successfully'
+      message: 'Credential successfully verified against blockchain records.'
     };
+
   } catch (error: any) {
-    console.error('Verification error:', error);
+    console.error('Firestore Verification Error:', error);
     return {
       isValid: false,
       status: 'invalid',
       verificationDate,
       verificationId,
-      message: error.message || 'Verification failed due to a system error'
+      message: 'An error occurred while connecting to the verification server.'
     };
   }
 };

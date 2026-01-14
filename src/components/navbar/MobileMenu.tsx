@@ -71,7 +71,7 @@ const MobileMenu = ({ authState, activeTab, onTabChange, onLogin, onSignup, onVe
       {/* Backdrop */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40 animate-fade-in"
+          className="fixed inset-0 bg-background/80 backdrop-sm z-40 animate-fade-in"
           onClick={() => setIsOpen(false)}
         />
       )}
@@ -99,7 +99,7 @@ const MobileMenu = ({ authState, activeTab, onTabChange, onLogin, onSignup, onVe
         </div>
 
         {/* Navigation Links */}
-        <nav className="p-4 space-y-2">
+        <nav className="p-4 space-y-2 bg-black backdrop-blur-md">
           {navItems.map((item) => (
             <button
               key={item.id}

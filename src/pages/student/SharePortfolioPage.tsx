@@ -86,19 +86,25 @@ const SharePortfolioPage = () => {
     const credentialsHTML = credentials
       .map(
         (cred) => `
-      <div class="credential-item">
-        <h3 class="credential-title">${cred.title}</h3>
-        <p class="credential-issuer">${cred.issuerName}</p>
-        <p class="credential-description">${cred.description}</p>
-        <div class="credential-meta">
+      <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #e0e0e0;">
+        <h3 style="margin: 0 0 5px 0; font-size: 16px; font-weight: 600; color: #000;">
+          ${cred.title}
+        </h3>
+        <p style="margin: 0 0 8px 0; font-size: 13px; color: #333; font-weight: 500;">
+          ${cred.issuerName}
+        </p>
+        <p style="margin: 0 0 5px 0; font-size: 12px; color: #666; line-height: 1.5;">
+          ${cred.description}
+        </p>
+        <div style="margin-top: 8px; font-size: 11px; color: #555;">
           <span>Issued: ${formatDate(cred.issueDate)}</span>
           ${cred.expiryDate ? ` | <span>Expires: ${formatDate(cred.expiryDate)}</span>` : ""}
           ${cred.level ? ` | <span>Level: ${cred.level}</span>` : ""}
-          ${cred.hours ? ` | <span>Duration: ${cred.hours} hours</span>` : ""}
         </div>
         ${cred.skills && cred.skills.length > 0 ? `
-        <div class="credential-skills">
-          <strong>Skills:</strong> ${cred.skills.join(", ")}
+        <div style="margin-top: 8px;">
+          <span style="font-size: 11px; color: #555;">Skills: </span>
+          <span style="font-size: 11px; color: #333;">${cred.skills.join(", ")}</span>
         </div>
         ` : ""}
       </div>
@@ -113,119 +119,112 @@ const SharePortfolioPage = () => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio - ${user?.firstName} ${user?.lastName}</title>
     <style>
+        @media print {
+            @page {
+                size: A4;
+                margin: 0;
+            }
+            body {
+                margin: 0;
+                padding: 0;
+            }
+        }
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         body {
-            font-family: 'Georgia', 'Times New Roman', serif;
-            background: #fff;
-            color: #000;
-            line-height: 1.6;
+            font-family: 'Times New Roman', serif;
+            background: white;
+            color: black;
             padding: 0;
             margin: 0;
         }
-        .container {
-            max-width: 900px;
+        .page {
+            width: 210mm;
+            min-height: 297mm;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 25mm;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         .header {
-            text-align: center;
-            border-bottom: 3px solid #000;
-            padding-bottom: 20px;
-            margin-bottom: 40px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
         }
         .name {
-            font-size: 36px;
+            font-size: 28px;
             font-weight: bold;
             color: #000;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        .subtitle {
-            font-size: 16px;
-            color: #333;
-            font-style: italic;
-        }
-        .section-title {
-            font-size: 24px;
-            font-weight: bold;
-            color: #000;
-            margin: 40px 0 20px 0;
-            border-bottom: 2px solid #000;
-            padding-bottom: 10px;
+            margin-bottom: 5px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
+        .subtitle {
+            font-size: 14px;
+            color: #333;
+            margin-top: 5px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #000;
+            margin: 25px 0 15px 0;
+            border-bottom: 1px solid #000;
+            padding-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
         .credentials {
-            margin-top: 30px;
+            margin-top: 20px;
         }
         .credential-item {
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #ddd;
-        }
-        .credential-item:last-child {
-            border-bottom: none;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
         }
         .credential-title {
-            margin: 0 0 8px 0;
-            font-size: 20px;
+            margin: 0 0 5px 0;
+            font-size: 16px;
             font-weight: 600;
             color: #000;
         }
         .credential-issuer {
-            margin: 0 0 10px 0;
-            font-size: 16px;
+            margin: 0 0 8px 0;
+            font-size: 13px;
             color: #333;
             font-weight: 500;
-            font-style: italic;
         }
         .credential-description {
-            margin: 0 0 12px 0;
-            font-size: 14px;
-            color: #555;
-            line-height: 1.7;
-        }
-        .credential-meta {
-            margin-top: 10px;
-            font-size: 13px;
-            color: #666;
-        }
-        .credential-skills {
-            margin-top: 10px;
-            font-size: 13px;
-            color: #666;
-        }
-        .credential-skills strong {
-            color: #000;
-        }
-        .footer {
-            margin-top: 50px;
-            padding-top: 20px;
-            border-top: 1px solid #ddd;
+            margin: 0 0 5px 0;
             font-size: 12px;
             color: #666;
-            text-align: center;
+            line-height: 1.5;
         }
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px 15px;
-            }
-            .name {
-                font-size: 28px;
-            }
-            .section-title {
-                font-size: 20px;
-            }
+        .credential-meta {
+            margin-top: 8px;
+            font-size: 11px;
+            color: #555;
+        }
+        .credential-skills {
+            margin-top: 8px;
+            font-size: 11px;
+            color: #555;
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 10px;
+            color: #666;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="page">
         <div class="header">
             <div class="name">${user?.firstName} ${user?.lastName}</div>
             <div class="subtitle">Professional Credentials Portfolio</div>
@@ -302,69 +301,75 @@ const SharePortfolioPage = () => {
             </p>
           </div>
 
-          {/* Portfolio Preview */}
-          <div className="mb-6">
-            <div className="bg-white shadow-lg border border-gray-200 rounded-lg overflow-hidden">
-              <div className="p-8 md:p-12" style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}>
-                {/* Header */}
-                <div className="text-center border-b-2 border-black pb-6 mb-8">
-                  <h1 className="text-3xl md:text-4xl font-bold text-black mb-3 uppercase tracking-wider">
-                    {user?.firstName} {user?.lastName}
-                  </h1>
-                  <p className="text-base text-gray-700 italic">
-                    Professional Credentials Portfolio
-                  </p>
+          {/* A4 Portfolio Preview */}
+          <div className="flex justify-center mb-6">
+            <div
+              className="bg-white shadow-lg"
+              style={{
+                width: "210mm",
+                minHeight: "297mm",
+                padding: "25mm",
+                transform: "scale(0.7)",
+                transformOrigin: "top center",
+              }}
+            >
+              {/* Portfolio Content Preview */}
+              <div className="border-b-2 border-black pb-4 mb-6">
+                <div className="text-3xl font-bold text-black mb-2 uppercase tracking-wide">
+                  {user?.firstName} {user?.lastName}
+                </div>
+                <div className="text-sm text-gray-700 mt-2">
+                  Professional Credentials Portfolio
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <div className="text-lg font-bold text-black mb-4 pb-2 border-b border-black uppercase tracking-wide">
+                  Credentials & Achievements
                 </div>
 
-                {/* Section Title */}
-                <h2 className="text-xl md:text-2xl font-bold text-black mb-6 pb-3 border-b-2 border-black uppercase tracking-wide">
-                  Credentials & Achievements
-                </h2>
-
-                {/* Credentials List */}
-                <div className="space-y-6">
-                  {credentials.map((cred, index) => (
+                <div className="space-y-5">
+                  {credentials.map((cred) => (
                     <div
                       key={cred.id}
-                      className={`pb-6 ${index < credentials.length - 1 ? "border-b border-gray-300" : ""}`}
+                      className="pb-4 border-b border-gray-300"
                     >
-                      <h3 className="text-lg md:text-xl font-semibold text-black mb-2">
+                      <h3 className="text-base font-semibold text-black mb-1">
                         {cred.title}
                       </h3>
-                      <p className="text-base text-gray-800 font-medium mb-3 italic">
+                      <p className="text-sm text-gray-800 font-medium mb-2">
                         {cred.issuerName}
                       </p>
-                      <p className="text-sm text-gray-600 mb-3 leading-relaxed">
+                      <p className="text-xs text-gray-600 mb-2 leading-relaxed">
                         {cred.description}
                       </p>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-xs text-gray-500 mt-2">
                         <span>Issued: {formatDate(cred.issueDate)}</span>
                         {cred.expiryDate && (
                           <> | Expires: {formatDate(cred.expiryDate)}</>
                         )}
                         {cred.level && <> | Level: {cred.level}</>}
-                        {cred.hours && <> | Duration: {cred.hours} hours</>}
                       </div>
                       {cred.skills && cred.skills.length > 0 && (
-                        <div className="text-sm text-gray-500 mt-2">
-                          <strong className="text-black">Skills:</strong> {cred.skills.join(", ")}
+                        <div className="text-xs text-gray-500 mt-2">
+                          <span className="font-medium">Skills: </span>
+                          <span>{cred.skills.join(", ")}</span>
                         </div>
                       )}
                     </div>
                   ))}
                 </div>
+              </div>
 
-                {/* Footer */}
-                <div className="mt-10 pt-6 border-t border-gray-300 text-center">
-                  <p className="text-xs text-gray-500">
-                    Generated on{" "}
-                    {new Date().toLocaleDateString("en-US", {
-                      month: "long",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
-                  </p>
-                </div>
+              <div className="mt-8 pt-4 border-t border-gray-300 text-center">
+                <p className="text-xs text-gray-500">
+                  Generated on{" "}
+                  {new Date().toLocaleDateString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </p>
               </div>
             </div>
           </div>

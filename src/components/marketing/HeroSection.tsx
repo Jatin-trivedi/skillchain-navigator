@@ -47,7 +47,7 @@ const HeroSection = () => {
 
         {/* Subtitle */}
         <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-in" style={{ animationDelay: "0.2s" }}>
-          SkillChain revolutionizes credential verification using blockchain technology.
+          Authvision revolutionizes credential verification using blockchain technology.
           Issue, manage, and verify professional credentials with{" "}
           <span className="text-foreground font-medium">trust</span> and{" "}
           <span className="text-foreground font-medium">transparency</span>.

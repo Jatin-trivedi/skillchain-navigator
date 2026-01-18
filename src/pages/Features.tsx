@@ -264,23 +264,17 @@ const Features = () => {
               </p>
             </div>
 
-            <div className="flex gap-3 mb-4">
-              <input
-                type="text"
-                placeholder="Try: CRD-2024-DEMO123"
-                className="flex-1 px-4 py-3 rounded-lg bg-card border border-border focus:border-primary focus:outline-none text-foreground"
-              />
+            <div className="flex gap-3 mb-4 flex justify-center">
+              
               <Button
-                className="gradient-bg text-primary-foreground px-6"
-                onClick={() => navigate("/verify")}
+                className="gradient-bg text-primary-foreground px-6  "
+                onClick={() => navigate("/verify")} 
               >
                 Verify
               </Button>
             </div>
 
-            <p className="text-xs text-muted-foreground text-center">
-              Demo IDs: CRD-2024-DEMO123, CRD-2024-VERIFIED, CRD-2024-REVOKED
-            </p>
+        
           </div>
         </section>
 

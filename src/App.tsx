@@ -32,6 +32,8 @@ import ContactPage from "./pages/static/ContactPage";
 import TermsPage from "./pages/static/TermsPage";
 import PrivacyPage from "./pages/static/PrivacyPage";
 import WhyBlockchainPage from "./pages/static/WhyBlockchainPage";
+import ScrollToTop from "./components/footer/ScrollToTop";
+
 
 const queryClient = new QueryClient();
 
@@ -42,6 +44,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
+          <ScrollToTop/>
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Index />} />

@@ -137,10 +137,12 @@ const Examples = () => {
             </span>
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
-            See <span className="gradient-text">SkillChain in Action</span>
+            See <span className="gradient-text">AuthVision in action
+            </span>
           </h1>
           <p className="text-lg text-muted-foreground">
-            Explore how organizations across industries use SkillChain to issue 
+            Explore how organizations across industries use AuthVision
+to issue 
             trusted, blockchain-verified credentials.
           </p>
         </div>
